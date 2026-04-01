@@ -18,9 +18,7 @@ A new Flutter plugin project.
   s.dependency 'Flutter'
   s.platform = :ios, '9.0'
 
-  s.script_phase = {
-    :name => 'Build SuperNativeExtensions Rust library',
-    :script => <<-SCRIPT
+  script = <<-SCRIPT
       PREBUILT="$PODS_TARGET_SRCROOT/Prebuilt/$PLATFORM_NAME/libsuper_native_extensions.a"
       if [ -f "$PREBUILT" ]; then
         echo "Using pre-built libsuper_native_extensions.a for $PLATFORM_NAME"
@@ -28,11 +26,15 @@ A new Flutter plugin project.
       else
         sh "$PODS_TARGET_SRCROOT/../cargokit/build_pod.sh" ../rust super_native_extensions
       fi
-    SCRIPT
+  SCRIPT
+  s.script_phase = {
+    :name => 'Build SuperNativeExtensions Rust library',
+    :script => script,
     :execution_position => :before_compile,
     :input_files => ['${BUILT_PRODUCTS_DIR}/cargokit_phony'],
     :output_files => ["${BUILT_PRODUCTS_DIR}/libsuper_native_extensions.a"],
   }
+
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
     # Flutter.framework does not contain a i386 slice.
